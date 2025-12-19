@@ -2,7 +2,7 @@ use crate::shortcuts::{register_shortcuts, unregister_all_shortcuts, ShortcutMan
 use tauri::{
     menu::{Menu, MenuItem},
     tray::{MouseButtonState, TrayIconBuilder, TrayIconEvent},
-    AppHandle, Manager,
+    AppHandle, Emitter, Manager,
 };
 
 fn build_menu(app: &AppHandle) -> Result<Menu<tauri::Wry>, String> {
@@ -10,6 +10,7 @@ fn build_menu(app: &AppHandle) -> Result<Menu<tauri::Wry>, String> {
     let config = manager.get_config();
 
     let show_keys = config.shortcuts.get("show_window").cloned();
+    let settings_keys = config.shortcuts.get("open_settings").cloned();
 
     // Check window visibility to determine menu text
     let is_visible = app
@@ -21,10 +22,12 @@ fn build_menu(app: &AppHandle) -> Result<Menu<tauri::Wry>, String> {
 
     let toggle = MenuItem::with_id(app, "toggle", toggle_label, true, show_keys.as_deref())
         .map_err(|e| e.to_string())?;
+    let settings = MenuItem::with_id(app, "settings", "设置...", true, settings_keys.as_deref())
+        .map_err(|e| e.to_string())?;
     let quit = MenuItem::with_id(app, "quit", "退出", true, None::<&str>)
         .map_err(|e| e.to_string())?;
 
-    Menu::with_items(app, &[&toggle, &quit]).map_err(|e| e.to_string())
+    Menu::with_items(app, &[&toggle, &settings, &quit]).map_err(|e| e.to_string())
 }
 
 pub fn setup_tray(app: &AppHandle) -> Result<(), String> {
@@ -60,6 +63,14 @@ pub fn setup_tray(app: &AppHandle) -> Result<(), String> {
                             let _ = window.show();
                             let _ = window.set_focus();
                         }
+                        let _ = rebuild_tray(app);
+                    }
+                }
+                "settings" => {
+                    if let Some(window) = app.get_webview_window("main") {
+                        let _ = window.show();
+                        let _ = window.set_focus();
+                        let _ = window.emit("navigate", "/settings");
                         let _ = rebuild_tray(app);
                     }
                 }

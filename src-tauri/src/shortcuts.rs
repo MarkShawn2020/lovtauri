@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
 use std::sync::Mutex;
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_global_shortcut::{GlobalShortcutExt, Shortcut, ShortcutState};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -15,6 +15,7 @@ impl Default for ShortcutConfig {
     fn default() -> Self {
         let mut shortcuts = HashMap::new();
         shortcuts.insert("show_window".to_string(), "CommandOrControl+Shift+L".to_string());
+        shortcuts.insert("open_settings".to_string(), "CommandOrControl+,".to_string());
         Self { shortcuts }
     }
 }
@@ -112,6 +113,14 @@ fn handle_shortcut_action(app: &AppHandle, action: &str) {
                     let _ = window.show();
                     let _ = window.set_focus();
                 }
+                let _ = crate::tray::rebuild_tray(app);
+            }
+        }
+        "open_settings" => {
+            if let Some(window) = app.get_webview_window("main") {
+                let _ = window.show();
+                let _ = window.set_focus();
+                let _ = window.emit("navigate", "/settings");
                 let _ = crate::tray::rebuild_tray(app);
             }
         }

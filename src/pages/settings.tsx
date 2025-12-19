@@ -18,6 +18,7 @@ const themeOptions: { value: Theme; label: string; icon: typeof Sun }[] = [
 
 const SHORTCUT_LABELS: Record<string, string> = {
   show_window: "显示/隐藏窗口",
+  open_settings: "打开设置",
 };
 
 export default function Settings() {
