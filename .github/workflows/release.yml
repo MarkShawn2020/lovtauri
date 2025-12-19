@@ -25,7 +25,7 @@ jobs:
           tag_name: ${{ github.event.inputs.tag }}
           name: ${{ github.event.inputs.tag }}
           draft: true
-          generate_release_notes: true
+          body: "Building..."
 
   build-tauri:
     needs: create-release
@@ -86,13 +86,11 @@ jobs:
     needs: [create-release, build-tauri]
     runs-on: ubuntu-latest
     steps:
-      - name: Publish release
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.rest.repos.updateRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              release_id: ${{ needs.create-release.outputs.release_id }},
-              draft: false
-            })
+      - uses: actions/checkout@v4
+      - name: Generate release notes and publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release edit ${{ needs.create-release.outputs.tag }} \
+            --draft=false \
+            --notes "$(gh api repos/${{ github.repository }}/releases/generate-notes -f tag_name=${{ needs.create-release.outputs.tag }} --jq .body)"
