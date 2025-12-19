@@ -87,10 +87,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Generate release notes and publish
+      - name: Extract changelog and publish
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          VERSION="${{ needs.create-release.outputs.tag }}"
+          VERSION_NUM="${VERSION#v}"
+
+          # Extract section from CHANGELOG.md for this version
+          if [ -f CHANGELOG.md ]; then
+            NOTES=$(awk -v ver="$VERSION_NUM" '
+              /^## / { if (found) exit; if ($2 == ver) found=1; next }
+              found { print }
+            ' CHANGELOG.md)
+          fi
+
+          # Fallback to auto-generated notes if CHANGELOG.md section is empty
+          if [ -z "$NOTES" ]; then
+            NOTES=$(gh api repos/${{ github.repository }}/releases/generate-notes \
+              -f tag_name=${{ needs.create-release.outputs.tag }} --jq .body)
+          fi
+
           gh release edit ${{ needs.create-release.outputs.tag }} \
             --draft=false \
-            --notes "$(gh api repos/${{ github.repository }}/releases/generate-notes -f tag_name=${{ needs.create-release.outputs.tag }} --jq .body)"
+            --notes "$NOTES"
