@@ -10,11 +10,13 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8">
-      <h1 className="text-4xl font-bold mb-8">Welcome to lovstudio Tauri Boilerplate</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 py-6 pb-24 sm:pb-6 sm:px-6 md:px-8">
+      <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-6 sm:mb-8 text-center leading-tight">
+        Welcome to lovstudio Tauri
+      </h1>
 
-      <div className="flex items-center gap-4 mb-8">
-        <img src="/lovpen-logo.svg" className="h-24" alt="Lovstudio" />
+      <div className="flex items-center gap-4 mb-6 sm:mb-8">
+        <img src="/lovpen-logo.svg" className="h-20 sm:h-24 md:h-28" alt="Lovstudio" />
       </div>
 
       <form
@@ -22,24 +24,28 @@ export default function Home() {
           e.preventDefault();
           greet();
         }}
-        className="flex gap-2 mb-4"
+        className="flex flex-col gap-3 w-full max-w-sm"
       >
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Enter a name..."
-          className="px-4 py-2 border rounded-md"
+          className="px-4 py-3 border rounded-xl bg-background text-base focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow"
         />
         <button
           type="submit"
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90"
+          className="px-4 py-3 bg-primary text-primary-foreground rounded-xl font-medium text-base active:scale-[0.98] transition-transform"
         >
           Greet
         </button>
       </form>
 
-      {greetMsg && <p className="text-lg">{greetMsg}</p>}
+      {greetMsg && (
+        <div className="mt-6 p-4 bg-muted rounded-xl w-full max-w-sm">
+          <p className="text-base text-center">{greetMsg}</p>
+        </div>
+      )}
     </div>
   );
 }

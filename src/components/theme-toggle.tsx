@@ -1,5 +1,6 @@
 import { Moon, Sun, Monitor } from "lucide-react";
 import { useThemeStore } from "@/stores/theme";
+import { cn } from "@/lib/utils";
 
 type Theme = "light" | "dark" | "system";
 
@@ -10,7 +11,11 @@ const themeLabels: Record<Theme, string> = {
   system: "系统",
 };
 
-export default function ThemeToggle() {
+interface ThemeToggleProps {
+  compact?: boolean;
+}
+
+export default function ThemeToggle({ compact }: ThemeToggleProps) {
   const { theme, setTheme } = useThemeStore();
 
   const cycleTheme = () => {
@@ -20,10 +25,24 @@ export default function ThemeToggle() {
   };
 
   const icon = {
-    light: <Sun className="h-5 w-5" />,
-    dark: <Moon className="h-5 w-5" />,
-    system: <Monitor className="h-5 w-5" />,
+    light: <Sun className={cn(compact ? "h-6 w-6" : "h-5 w-5")} />,
+    dark: <Moon className={cn(compact ? "h-6 w-6" : "h-5 w-5")} />,
+    system: <Monitor className={cn(compact ? "h-6 w-6" : "h-5 w-5")} />,
   }[theme];
+
+  if (compact) {
+    return (
+      <button
+        onClick={cycleTheme}
+        className="flex flex-col items-center justify-center text-muted-foreground active:text-primary transition-colors"
+        aria-label="Toggle theme"
+        title={`当前: ${themeLabels[theme]}`}
+      >
+        {icon}
+        <span className="text-xs mt-1 font-medium">{themeLabels[theme]}</span>
+      </button>
+    );
+  }
 
   return (
     <button
