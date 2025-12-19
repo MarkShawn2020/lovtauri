@@ -13,23 +13,8 @@ export default function Home() {
     <div className="flex flex-col items-center justify-center min-h-screen p-8">
       <h1 className="text-4xl font-bold mb-8">Welcome to lovstudio Tauri Boilerplate</h1>
 
-      <div className="flex gap-4 mb-8">
-        <a
-          href="https://tauri.app"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:opacity-80"
-        >
-          <img src="/tauri.svg" className="h-20" alt="Tauri" />
-        </a>
-        <a
-          href="https://react.dev"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:opacity-80"
-        >
-          <img src="/vite.svg" className="h-20" alt="Vite" />
-        </a>
+      <div className="flex items-center gap-4 mb-8">
+        <img src="/lovpen-logo.svg" className="h-24" alt="Lovstudio" />
       </div>
 
       <form

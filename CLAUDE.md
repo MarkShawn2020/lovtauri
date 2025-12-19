@@ -2,6 +2,37 @@
 
 This file provides guidance to Claude Code when working with this lovstudio Tauri boilerplate.
 
+## Design System
+
+This project uses **Lovstudio Warm Academic Style (暖学术风格)**
+
+Reference complete design guide: file:///Users/mark/@lovstudio/design/design-guide.md
+
+### Quick Rules
+1. **禁止硬编码颜色**：必须使用 semantic 类名（如 `bg-primary`、`text-muted-foreground`）
+2. **字体配对**：标题用 `font-serif`，正文用默认 `font-sans`
+3. **圆角风格**：使用 `rounded-lg`、`rounded-xl`、`rounded-2xl`
+4. **主色调**：陶土色（按钮/高亮）+ 暖米色背景 + 炭灰文字
+5. **组件优先**：优先使用 shadcn/ui 组件
+
+### Color Palette
+- **Primary**: #CC785C (陶土色 Terracotta) - for buttons, highlights
+- **Background**: #F9F9F7 (暖米色 Warm Beige) - main background
+- **Foreground**: #181818 (炭灰色 Charcoal) - text
+- **Muted**: #E8E6DC (浅灰 Light Gray) - secondary backgrounds
+- **Border**: #D5D3CB (边框灰 Border Gray)
+
+### Common Patterns
+- 主按钮: `bg-primary text-primary-foreground hover:bg-primary/90`
+- 次要按钮: `variant="ghost" text-muted-foreground hover:text-foreground hover:bg-muted`
+- 卡片: `bg-card border border-border rounded-xl`
+- 静音文字: `text-muted-foreground text-sm`
+- 标题: `font-serif text-foreground`
+
+### Logo Assets
+- Main Logo: `/lovpen-logo.svg` (陶土色 #D97757)
+- Original: file:///Users/mark/@lovstudio/assets/lovpen-logo/LovPen-pure-logo_primaryColor.svg
+
 ## Project Overview
 
 **lovstudio Tauri Boilerplate** - Production-ready Tauri + React + TypeScript starter with modern tooling.
