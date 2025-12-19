@@ -4,7 +4,7 @@
   "description": "Lovtauri - A Tauri app by lovstudio",
   "author": "lovstudio",
   "private": false,
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "keywords": [
     "tauri",

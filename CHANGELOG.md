@@ -1,5 +1,11 @@
 # lovtauri
 
+## 0.1.2
+
+### Patch Changes
+
+- 支持 Cmd+R 快捷键刷新页面
+
 ## 0.1.1
 
 ### Patch Changes
