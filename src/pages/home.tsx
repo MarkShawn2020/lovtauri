@@ -10,7 +10,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 py-6 pb-24 sm:pb-6 sm:px-6 md:px-8">
+    <div className="flex flex-1 flex-col items-center justify-center px-4 py-6 pb-24 sm:pb-6 sm:px-6 md:px-8">
       <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 text-center leading-tight">
         Welcome to Lovtauri
       </h1>

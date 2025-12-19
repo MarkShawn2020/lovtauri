@@ -21,11 +21,15 @@ function App() {
   return (
     <ThemeProvider>
       <BrowserRouter>
-        <Nav />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/settings" element={<Settings />} />
-        </Routes>
+        <div className="flex min-h-screen flex-col">
+          <Nav />
+          <main className="flex flex-1 flex-col">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/settings" element={<Settings />} />
+            </Routes>
+          </main>
+        </div>
       </BrowserRouter>
     </ThemeProvider>
   );
