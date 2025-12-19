@@ -1,41 +1,36 @@
 mod commands;
+mod shortcuts;
+mod tray;
 
 use commands::*;
-use tauri::{
-    menu::{Menu, MenuItem},
-    tray::TrayIconBuilder,
-    Manager, WindowEvent,
-};
+use shortcuts::{register_shortcuts, ShortcutManager};
+use tauri::{Manager, WindowEvent};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .setup(|app| {
-            let show = MenuItem::with_id(app, "show", "显示窗口", true, None::<&str>)?;
-            let quit = MenuItem::with_id(app, "quit", "退出", true, None::<&str>)?;
-            let menu = Menu::with_items(app, &[&show, &quit])?;
+            // Initialize shortcut manager
+            let shortcut_manager = ShortcutManager::new(&app.handle());
+            app.manage(shortcut_manager);
 
-            TrayIconBuilder::with_id("main")
-                .icon(app.default_window_icon().unwrap().clone())
-                .menu(&menu)
-                .on_menu_event(|app, event| match event.id.as_ref() {
-                    "show" => {
-                        if let Some(window) = app.get_webview_window("main") {
-                            let _ = window.show();
-                            let _ = window.set_focus();
-                        }
-                    }
-                    "quit" => {
-                        app.exit(0);
-                    }
-                    _ => {}
-                })
-                .build(app)?;
+            // Setup tray with shortcuts display
+            tray::setup_tray(&app.handle())?;
+
+            // Register global shortcuts
+            register_shortcuts(&app.handle())?;
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![greet, set_tray_visible])
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            set_tray_visible,
+            get_shortcuts,
+            update_shortcut,
+            get_shortcut_display
+        ])
         .on_window_event(|window, event| {
             if let WindowEvent::CloseRequested { api, .. } = event {
                 let _ = window.hide();

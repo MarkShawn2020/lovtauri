@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { Moon, Sun, Monitor, ChevronRight, ChevronDown } from "lucide-react";
+import { Moon, Sun, Monitor, ChevronRight, ChevronDown, Keyboard } from "lucide-react";
 import { getVersion } from "@tauri-apps/api/app";
 import { invoke } from "@tauri-apps/api/core";
 import { useThemeStore } from "@/stores/theme";
 import { useSettingsStore } from "@/stores/settings";
+import { useShortcutsStore } from "@/stores/shortcuts";
+import { ShortcutRecorder } from "@/components/shortcut-recorder";
 import { cn } from "@/lib/utils";
 
 type Theme = "light" | "dark" | "system";
@@ -14,15 +16,31 @@ const themeOptions: { value: Theme; label: string; icon: typeof Sun }[] = [
   { value: "system", label: "跟随系统", icon: Monitor },
 ];
 
+const SHORTCUT_LABELS: Record<string, string> = {
+  show_window: "显示窗口",
+};
+
 export default function Settings() {
   const { theme, setTheme } = useThemeStore();
   const { showTray, setShowTray } = useSettingsStore();
+  const { shortcuts, fetchShortcuts, updateShortcut, getDisplayKeys } =
+    useShortcutsStore();
   const [version, setVersion] = useState("");
   const [showLicense, setShowLicense] = useState(false);
+  const [displayKeys, setDisplayKeys] = useState<Record<string, string>>({});
 
   useEffect(() => {
     getVersion().then(setVersion);
+    fetchShortcuts();
   }, []);
+
+  useEffect(() => {
+    // Update display keys when shortcuts change
+    Object.entries(shortcuts).forEach(async ([action, keys]) => {
+      const display = await getDisplayKeys(keys);
+      setDisplayKeys((prev) => ({ ...prev, [action]: display }));
+    });
+  }, [shortcuts]);
 
   useEffect(() => {
     invoke("set_tray_visible", { visible: showTray });
@@ -58,6 +76,30 @@ export default function Settings() {
                 </button>
               );
             })}
+          </div>
+        </section>
+
+        {/* Shortcuts Section */}
+        <section className="mb-6">
+          <h2 className="text-sm font-medium text-muted-foreground mb-2 px-1">快捷键</h2>
+          <div className="bg-card rounded-xl border overflow-hidden">
+            {Object.entries(shortcuts).map(([action, keys], index) => (
+              <div
+                key={action}
+                className={cn(
+                  "flex items-center px-4 py-3",
+                  index !== Object.keys(shortcuts).length - 1 && "border-b"
+                )}
+              >
+                <Keyboard className="h-5 w-5 text-muted-foreground mr-3" />
+                <span className="flex-1">{SHORTCUT_LABELS[action] || action}</span>
+                <ShortcutRecorder
+                  value={keys}
+                  displayValue={displayKeys[action] || keys}
+                  onChange={(newKeys) => updateShortcut(action, newKeys)}
+                />
+              </div>
+            ))}
           </div>
         </section>
 

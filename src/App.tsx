@@ -6,9 +6,13 @@ import Nav from "./components/nav";
 import Home from "./pages/home";
 import Settings from "./pages/settings";
 import { useSettingsStore } from "./stores/settings";
+import { useGlobalShortcuts } from "./hooks/use-global-shortcuts";
 
 function App() {
   const showTray = useSettingsStore((s) => s.showTray);
+
+  // Register global shortcuts
+  useGlobalShortcuts();
 
   useEffect(() => {
     invoke("set_tray_visible", { visible: showTray });
